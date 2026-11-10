@@ -51,7 +51,11 @@ class RaumbuchApp(ctk.CTk):
         top.pack(pady=(28, 8), padx=16, fill="x")
         if logo_file.exists():
             try:
-                logo = ctk.CTkImage(light_image=ctk.Image.open(logo_file), size=(150, 75))
+                from PIL import Image
+                pil_logo = Image.open(logo_file)
+                logo_height = 90
+                logo_width = int(pil_logo.width / pil_logo.height * logo_height)
+                logo = ctk.CTkImage(light_image=pil_logo, size=(logo_width, logo_height))
                 ctk.CTkLabel(top, image=logo, text="").pack()
             except Exception:
                 pass
