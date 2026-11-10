@@ -1,138 +1,71 @@
 from pathlib import Path
-from typing import List, Tuple
+from typing import List, Sequence
 
-from openpyxl import Workbook, load_workbook
-from openpyxl.styles import Font, PatternFill, Alignment
+from openpyxl import Workbook
+from openpyxl.styles import Alignment, Font, PatternFill
 from openpyxl.utils import get_column_letter
 
-from . import config
-from .models import Room
 
-HEADERS = [
-    "Raumnummer", "Raumname", "Raumtyp", "Länge (m)", "Breite (m)",
-    "Höhe (m)", "Solltemperatur (°C)", "Umgebungstemperatur (°C)",
-    "U-Wert Wand (W/m²K)", "U-Wert Decke (W/m²K)", "U-Wert Boden (W/m²K)",
-    "Luftwechsel (1/h)", "Innere Lasten (W)", "Sicherheitsfaktor (%)", "Notizen",
-]
+from .models import Project
 
-NUMERIC_FIELDS = [
-    "laenge", "breite", "hoehe", "solltemperatur", "umgebungstemperatur",
-    "u_wand", "u_decke", "u_boden", "luftwechsel", "innere_laste",
-    "sicherheitsfaktor",
-]
-
-HEADER_FILL = PatternFill(start_color="FF" + config.COLORS["primary"].lstrip("#"),
-                          end_color="FF" + config.COLORS["primary"].lstrip("#"),
-                          fill_type="solid")
-HEADER_FONT = Font(color="FFFFFF", bold=True, size=11)
+HEADER_FILL = PatternFill(start_color="FF1A1A1A", end_color="FF1A1A1A", fill_type="solid")
+HEADER_FONT = Font(color="FFFFFFFF", bold=True, size=11)
 
 
-def create_template(path: Path) -> None:
-    wb = Workbook()
-    ws = wb.active
-    ws.title = "Räume"
-    ws.append(HEADERS)
-    for col in range(1, len(HEADERS) + 1):
+def _new_sheet(wb: Workbook, title: str, headers: Sequence[str],
+               rows: Sequence[Sequence[object]]) -> None:
+    ws = wb.active if wb.active.title == "Sheet" else wb.create_sheet()
+    ws.title = title
+    ws.append(list(headers))
+    for col in range(1, len(headers) + 1):
         cell = ws.cell(row=1, column=col)
         cell.fill = HEADER_FILL
         cell.font = HEADER_FONT
         cell.alignment = Alignment(horizontal="center", vertical="center")
-        ws.column_dimensions[get_column_letter(col)].width = max(14, len(HEADERS[col - 1]) + 4)
-    example = Room(
-        nummer="R-001", name="Kühlraum 1", raumtyp="Kühlraum",
-        laenge=5, breite=4, hoehe=3, solltemperatur=4, umgebungstemperatur=25,
-        u_wand=0.4, u_decke=0.4, u_boden=0.4, luftwechsel=0.5,
-        innere_laste=0, sicherheitsfaktor=10,
-    )
-    ws.append(_room_to_row(example))
-    ws.cell(row=2, column=1).value = "R-002 (Beispielzeile – bitte ersetzen)"
-    info = wb.create_sheet("Anleitung")
-    info_lines = [
-        "Raumbuch – Excel-Import",
-        "",
-        "So funktioniert es:",
-        "1. Füllen Sie das Blatt 'Räume' aus (eine Zeile = ein Raum).",
-        "2. Die Beispielzeile können Sie überschreiben.",
-        "3. Zahlen bitte ohne Einheiten eingeben (z. B. 5 statt 5 m).",
-        "4. Leere Zeilen werden automatisch übersprungen.",
-        "5. Speichern Sie die Datei und importieren Sie sie im Raumbuch.",
-        "",
-        "Pflichtfelder: Raumnummer, Raumname, Länge, Breite, Höhe.",
-        "Alle übrigen Spalten sind optional – es gelten die Standardwerte.",
-    ]
-    for line in info_lines:
-        info.append([line])
-    info.column_dimensions["A"].width = 80
-    info["A1"].font = Font(bold=True, size=14)
-    wb.save(path)
+        ws.column_dimensions[get_column_letter(col)].width = max(
+            14, len(str(headers[col - 1])) + 4)
+    for row in rows:
+        ws.append(list(row))
 
 
-def _room_to_row(room: Room) -> list:
-    return [
-        room.nummer, room.name, room.raumtyp,
-        room.laenge, room.breite, room.hoehe,
-        room.solltemperatur, room.umgebungstemperatur,
-        room.u_wand, room.u_decke, room.u_boden,
-        room.luftwechsel, room.innere_laste, room.sicherheitsfaktor,
-        room.notizen,
-    ]
-
-
-def export_rooms(rooms: List[Room], path: Path) -> None:
+def export_project(project: Project, path: Path) -> None:
     wb = Workbook()
-    ws = wb.active
-    ws.title = "Räume"
-    ws.append(HEADERS + ["Fläche (m²)", "Volumen (m³)", "Kälteleistung (W)"])
-    for col in range(1, len(HEADERS) + 4):
-        cell = ws.cell(row=1, column=col)
-        cell.fill = HEADER_FILL
-        cell.font = HEADER_FONT
-        ws.column_dimensions[get_column_letter(col)].width = 16
-    from .calculation import berechne_kaelteleistung
-    for room in rooms:
-        result = berechne_kaelteleistung(room)
-        ws.append(_room_to_row(room) + [result["flaeche"], result["volumen"], round(result["gesamt"], 1)])
+    _new_sheet(wb, "Projekt", ["Feld", "Wert"],
+               [(k, v) for k, v in _projekt_zeilen(project)])
+    _new_sheet(wb, "Räume",
+               ["Raumnummer", "Raumname", "Raumtyp", "Länge (m)", "Breite (m)",
+                "Höhe (m)", "Fläche (m²)", "Volumen (m³)", "Notizen"],
+               [[r.nummer, r.name, r.raumtyp, r.laenge, r.breite, r.hoehe,
+                 round(r.flaeche(), 2), round(r.volumen(), 2), r.notizen]
+                for r in project.raeume])
+    _new_sheet(wb, "Zentrale",
+               ["Bezeichnung", "Medium", "Leistung (kW)", "Temperatur (°C)", "Notizen"],
+               [[z.bezeichnung, z.medium, z.leistung_kw, z.temperatur_c, z.notizen]
+                for z in project.zentrale])
+    _new_sheet(wb, "Füllmenge",
+               ["Medium", "Menge (kg)", "Ort", "Notizen"],
+               [[f.medium, f.menge_kg, f.ort, f.notizen] for f in project.fuellmengen])
+    _new_sheet(wb, "Summen", ["Bezeichnung", "Wert"], [
+        ("Gesamtfläche (m²)", round(project.gesamtflaeche(), 2)),
+        ("Gesamtvolumen (m³)", round(project.gesamtvolumen(), 2)),
+        ("Gesamtleistung Zentrale (kW)", round(project.gesamtleistung_kw(), 2)),
+        ("Gesamte Füllmenge (kg)", round(project.gesamtmenge_kg(), 2)),
+    ])
     wb.save(path)
 
 
-def import_rooms(path: Path) -> Tuple[List[Room], List[str]]:
-    wb = load_workbook(path, data_only=True)
-    if "Räume" not in wb.sheetnames:
-        return [], ["Die Datei enthält kein Blatt mit dem Namen 'Räume'. "
-                    "Bitte verwenden Sie die Vorlage aus dem Raumbuch."]
-    ws = wb["Räume"]
-    header = [str(c.value or "").strip() for c in ws[1]]
-    try:
-        col_map = {name: header.index(name) for name in HEADERS}
-    except ValueError as exc:
-        return [], [f"Die Spalten entsprechen nicht der Vorlage ({exc}). "
-                    "Bitte verwenden Sie die Vorlage aus dem Raumbuch."]
-
-    rooms: List[Room] = []
-    errors: List[str] = []
-    for row_idx, row in enumerate(ws.iter_rows(min_row=2, values_only=True), start=2):
-        if all(v is None or str(v).strip() == "" for v in row):
-            continue
-        room = Room()
-        try:
-            room.nummer = str(row[col_map["Raumnummer"]] or "").strip()
-            room.name = str(row[col_map["Raumname"]] or "").strip()
-            room.raumtyp = str(row[col_map["Raumtyp"]] or "Kühlraum").strip() or "Kühlraum"
-            for label, field in zip(HEADERS[3:14], NUMERIC_FIELDS):
-                value = row[col_map[label]]
-                if value is not None and str(value).strip() != "":
-                    setattr(room, field, float(str(value).replace(",", ".")))
-            room.notizen = str(row[col_map["Notizen"]] or "").strip()
-        except (ValueError, TypeError):
-            errors.append(f"Zeile {row_idx}: Ungültiger Zahlenwert – Raum wurde übersprungen.")
-            continue
-        if not room.nummer or not room.name:
-            errors.append(f"Zeile {row_idx}: Raumnummer oder Raumname fehlt – Raum wurde übersprungen.")
-            continue
-        if room.laenge <= 0 or room.breite <= 0 or room.hoehe <= 0:
-            errors.append(f"Zeile {row_idx} ({room.name}): Länge, Breite und Höhe müssen größer als 0 sein – Raum wurde übersprungen.")
-            continue
-        rooms.append(room)
-    if not rooms and not errors:
-        errors.append("In der Datei wurden keine Räume gefunden.")
-    return rooms, errors
+def _projekt_zeilen(project: Project) -> List[tuple]:
+    return [
+        ("Projektname", project.name),
+        ("Projektnummer", project.nummer),
+        ("Auslegung/Version", project.version),
+        ("Kunde", project.kunde),
+        ("Adresse", project.adresse),
+        ("Bauvorhaben", project.bauvorhaben),
+        ("Ansprechpartner", project.ansprechpartner),
+        ("Bearbeiter", project.bearbeiter),
+        ("Datum", project.datum),
+        ("Planungsstand", project.planungsstand),
+        ("Notizen", project.notizen),
+        ("Anzahl Räume", len(project.raeume)),
+    ]

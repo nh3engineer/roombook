@@ -1,25 +1,22 @@
 from dataclasses import dataclass, field, asdict
 from typing import List
-import uuid
 
 
 @dataclass
 class Room:
     nummer: str = ""
     name: str = ""
-    raumtyp: str = "Kühlraum"
+    raumtyp: str = "Lager"
     laenge: float = 0.0
     breite: float = 0.0
     hoehe: float = 0.0
-    solltemperatur: float = 4.0
-    umgebungstemperatur: float = 25.0
-    u_wand: float = 0.4
-    u_decke: float = 0.4
-    u_boden: float = 0.4
-    luftwechsel: float = 0.5
-    innere_laste: float = 0.0
-    sicherheitsfaktor: float = 10.0
     notizen: str = ""
+
+    def flaeche(self) -> float:
+        return self.laenge * self.breite
+
+    def volumen(self) -> float:
+        return self.flaeche() * self.hoehe
 
     def to_dict(self) -> dict:
         return asdict(self)
@@ -27,9 +24,9 @@ class Room:
     @classmethod
     def from_dict(cls, data: dict) -> "Room":
         room = cls()
-        for key, value in data.items():
+        for key, value in (data or {}).items():
             if hasattr(room, key):
-                if key in ("name", "nummer", "raumtyp", "notizen"):
+                if key in ("nummer", "name", "raumtyp", "notizen"):
                     setattr(room, key, str(value))
                 else:
                     try:
@@ -40,8 +37,60 @@ class Room:
 
 
 @dataclass
+class Zentrale:
+    bezeichnung: str = ""
+    medium: str = "NH3"
+    leistung_kw: float = 0.0
+    temperatur_c: float = 0.0
+    notizen: str = ""
+
+    def to_dict(self) -> dict:
+        return asdict(self)
+
+    @classmethod
+    def from_dict(cls, data: dict) -> "Zentrale":
+        z = cls()
+        for key, value in (data or {}).items():
+            if hasattr(z, key):
+                if key in ("bezeichnung", "medium", "notizen"):
+                    setattr(z, key, str(value))
+                else:
+                    try:
+                        setattr(z, key, float(value))
+                    except (TypeError, ValueError):
+                        pass
+        return z
+
+
+@dataclass
+class Fuellmenge:
+    medium: str = ""
+    menge_kg: float = 0.0
+    ort: str = ""
+    notizen: str = ""
+
+    def to_dict(self) -> dict:
+        return asdict(self)
+
+    @classmethod
+    def from_dict(cls, data: dict) -> "Fuellmenge":
+        f = cls()
+        for key, value in (data or {}).items():
+            if hasattr(f, key):
+                if key in ("medium", "ort", "notizen"):
+                    setattr(f, key, str(value))
+                else:
+                    try:
+                        setattr(f, key, float(value))
+                    except (TypeError, ValueError):
+                        pass
+        return f
+
+
+@dataclass
 class Project:
-    id: str = field(default_factory=lambda: uuid.uuid4().hex)
+    id: str = ""
+    version: str = "Auslegung 1"
     name: str = ""
     nummer: str = ""
     kunde: str = ""
@@ -50,13 +99,16 @@ class Project:
     ansprechpartner: str = ""
     datum: str = ""
     planungsstand: str = "In Planung"
+    bearbeiter: str = ""
     notizen: str = ""
-    archiviert: bool = False
     raeume: List[Room] = field(default_factory=list)
+    zentrale: List[Zentrale] = field(default_factory=list)
+    fuellmengen: List[Fuellmenge] = field(default_factory=list)
 
     def to_dict(self) -> dict:
         return {
             "id": self.id,
+            "version": self.version,
             "name": self.name,
             "nummer": self.nummer,
             "kunde": self.kunde,
@@ -65,32 +117,34 @@ class Project:
             "ansprechpartner": self.ansprechpartner,
             "datum": self.datum,
             "planungsstand": self.planungsstand,
+            "bearbeiter": self.bearbeiter,
             "notizen": self.notizen,
-            "archiviert": self.archiviert,
-            "raeume": [room.to_dict() for room in self.raeume],
+            "raeume": [r.to_dict() for r in self.raeume],
+            "zentrale": [z.to_dict() for z in self.zentrale],
+            "fuellmengen": [f.to_dict() for f in self.fuellmengen],
         }
 
     @classmethod
     def from_dict(cls, data: dict) -> "Project":
-        project = cls()
-        for key in ("id", "name", "nummer", "kunde", "adresse", "bauvorhaben",
-                    "ansprechpartner", "datum", "planungsstand", "notizen"):
+        p = cls()
+        for key in ("id", "version", "name", "nummer", "kunde", "adresse",
+                    "bauvorhaben", "ansprechpartner", "datum", "planungsstand",
+                    "bearbeiter", "notizen"):
             if key in data:
-                setattr(project, key, str(data[key] or ""))
-        project.archiviert = bool(data.get("archiviert", False))
-        project.raeume = [Room.from_dict(r) for r in data.get("raeume", [])]
-        return project
+                setattr(p, key, str(data[key] or ""))
+        p.raeume = [Room.from_dict(r) for r in data.get("raeume", [])]
+        p.zentrale = [Zentrale.from_dict(z) for z in data.get("zentrale", [])]
+        p.fuellmengen = [Fuellmenge.from_dict(f) for f in data.get("fuellmengen", [])]
+        return p
 
     def gesamtflaeche(self) -> float:
-        return sum(r.laenge * r.breite for r in self.raeume)
+        return sum(r.flaeche() for r in self.raeume)
 
     def gesamtvolumen(self) -> float:
-        return sum(r.laenge * r.breite * r.hoehe for r in self.raeume)
+        return sum(r.volumen() for r in self.raeume)
 
-    def gesamtleistung(self) -> float:
-        from .calculation import berechne_kaelteleistung
-        return sum(berechne_kaelteleistung(r)["gesamt"] for r in self.raeume)
+    def gesamtleistung_kw(self) -> float:
+        return sum(z.leistung_kw for z in self.zentrale)
 
-
-def neuer_raum_standard() -> Room:
-    return Room(nummer="", name="")
+    def gesamtmenge_kg(self) -> float:
+        return sum(f.menge_kg for f in self.fuellmengen)
