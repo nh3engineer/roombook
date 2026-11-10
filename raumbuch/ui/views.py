@@ -11,16 +11,16 @@ class ProjectListView(ctk.CTkFrame):
         super().__init__(parent, fg_color="transparent")
         self.app = app
         self.grid_columnconfigure(0, weight=1)
-        self.grid_rowconfigure(1, weight=1)
+        self.grid_rowconfigure(2, weight=1)
 
         header = ctk.CTkFrame(self, fg_color="transparent")
-        header.grid(row=0, column=0, sticky="ew", padx=28, pady=(24, 12))
+        header.grid(row=0, column=0, sticky="ew", padx=28, pady=(24, 8))
         widgets.section_title(header, "Meine Projekte").pack(side="left")
         widgets.primary_button(header, "+ Neues Projekt",
                                lambda: app.edit_project(None)).pack(side="right")
 
         search_frame = ctk.CTkFrame(self, fg_color="transparent")
-        search_frame.grid(row=0, column=0, sticky="ew", padx=28, pady=(70, 0))
+        search_frame.grid(row=1, column=0, sticky="ew", padx=28, pady=(0, 8))
         self.search = ctk.CTkEntry(search_frame, placeholder_text="🔍  Projekt suchen ...",
                                    height=38, font=("Segoe UI", 13))
         self.search.pack(side="left", fill="x", expand=True)
@@ -32,7 +32,7 @@ class ProjectListView(ctk.CTkFrame):
                         command=self.refresh_list).pack(side="right", padx=(16, 0))
 
         table_wrap = ctk.CTkFrame(self, fg_color="transparent")
-        table_wrap.grid(row=1, column=0, sticky="nsew", padx=28, pady=12)
+        table_wrap.grid(row=2, column=0, sticky="nsew", padx=28, pady=12)
         table_wrap.grid_columnconfigure(0, weight=1)
         table_wrap.grid_rowconfigure(0, weight=1)
 
@@ -45,7 +45,7 @@ class ProjectListView(ctk.CTkFrame):
         self.tree.bind("<Double-1>", lambda e: self.open_selected())
 
         btns = ctk.CTkFrame(self, fg_color="transparent")
-        btns.grid(row=2, column=0, sticky="ew", padx=28, pady=(4, 24))
+        btns.grid(row=3, column=0, sticky="ew", padx=28, pady=(4, 24))
         widgets.ghost_button(btns, "Öffnen", self.open_selected).pack(side="left", padx=(0, 10))
         widgets.ghost_button(btns, "Bearbeiten", self.edit_selected).pack(side="left", padx=10)
         widgets.accent_button(btns, "Archivieren / Aktivieren", self.toggle_archive).pack(side="left", padx=10)
@@ -59,7 +59,7 @@ class ProjectListView(ctk.CTkFrame):
         sel = self.tree.selection()
         if not sel:
             return None
-        return self.tree.item(sel[0])["values"][0]
+        return str(sel[0])
 
     def refresh_list(self):
         self.tree.delete(*self.tree.get_children())
@@ -328,7 +328,7 @@ class SettingsView(ctk.CTkFrame):
             row=0, column=0, sticky="w", padx=20, pady=(16, 4))
         ctk.CTkLabel(card,
                      text="Alle Projekte werden an diesem zentralen Ort gespeichert – ideal für Backups oder die Nutzung auf mehreren Rechnern.",
-                     font=("Segoe UI", 12), text_color="#6B7B8A", wraplength=600,
+                     font=("Segoe UI", 12), text_color=config.COLORS["muted"], wraplength=600,
                      justify="left").grid(row=1, column=0, sticky="w", padx=20)
 
         row = ctk.CTkFrame(card, fg_color="transparent")
@@ -348,7 +348,7 @@ class SettingsView(ctk.CTkFrame):
             side="left", padx=10)
 
         info = ctk.CTkLabel(self, text="Raumbuch 1.0 · Eckert & Partner Kälteplanung",
-                            text_color="#8A9AA8", font=("Segoe UI", 12))
+                            text_color=config.COLORS["muted"], font=("Segoe UI", 12))
         info.grid(row=3, column=0, sticky="w", padx=28, pady=(20, 10))
 
     def browse(self):

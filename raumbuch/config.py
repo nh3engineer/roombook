@@ -10,16 +10,19 @@ EXPORTS_SUBDIR = "exports"
 LOGO_FILE = "logo.png"
 
 COLORS = {
-    "primary": "#0E3A5D",
-    "primary_dark": "#0A2A45",
-    "accent": "#4FC3F7",
-    "accent_soft": "#D6EEFA",
-    "text_dark": "#12303F",
-    "bg_light": "#F4F8FB",
+    "primary": "#1A1A1A",
+    "primary_dark": "#000000",
+    "accent": "#E8A0B4",
+    "accent_soft": "#F6E3E8",
+    "text_dark": "#1A1A1A",
+    "bg_light": "#EFC9C4",
+    "sidebar": "#E3CDDC",
+    "sidebar_hover": "#D5C2D2",
+    "muted": "#6E5F6B",
     "card": "#FFFFFF",
     "success": "#2E9E5B",
     "warning": "#E2A03F",
-    "danger": "#C0392B",
+    "danger": "#B23A2E",
 }
 
 

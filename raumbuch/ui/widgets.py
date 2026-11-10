@@ -43,7 +43,7 @@ def hero_card(parent, title: str, value: str) -> ctk.CTkFrame:
     card = ctk.CTkFrame(parent, fg_color=config.COLORS["card"],
                         corner_radius=14, border_width=1,
                         border_color=config.COLORS["accent_soft"])
-    ctk.CTkLabel(card, text=title, text_color="#6B7B8A",
+    ctk.CTkLabel(card, text=title, text_color=config.COLORS["muted"],
                  font=("Segoe UI", 12)).pack(pady=(14, 2), padx=24)
     ctk.CTkLabel(card, text=value, text_color=config.COLORS["primary"],
                  font=("Segoe UI", 24, "bold")).pack(pady=(0, 14), padx=24)
@@ -65,8 +65,8 @@ def primary_button(parent, text: str, command, width: int = 180) -> ctk.CTkButto
 def accent_button(parent, text: str, command, width: int = 180) -> ctk.CTkButton:
     return ctk.CTkButton(parent, text=text, command=command, width=width, height=38,
                          fg_color=config.COLORS["accent"],
-                         hover_color="#2FA8DA",
-                         text_color="#0A2A45",
+                         hover_color="#D98BA0",
+                         text_color=config.COLORS["primary"],
                          font=("Segoe UI", 13, "bold"), corner_radius=10)
 
 
