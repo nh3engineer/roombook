@@ -328,7 +328,7 @@ class SettingsView(ctk.CTkFrame):
             row=0, column=0, sticky="w", padx=20, pady=(16, 4))
         ctk.CTkLabel(card,
                      text="Alle Projekte werden an diesem zentralen Ort gespeichert – ideal für Backups oder die Nutzung auf mehreren Rechnern.",
-                     font=("Segoe UI", 12), text_color="#6B7B8A", wraplength=600,
+                     font=("Segoe UI", 12), text_color=config.COLORS["muted"], wraplength=600,
                      justify="left").grid(row=1, column=0, sticky="w", padx=20)
 
         row = ctk.CTkFrame(card, fg_color="transparent")
@@ -348,7 +348,7 @@ class SettingsView(ctk.CTkFrame):
             side="left", padx=10)
 
         info = ctk.CTkLabel(self, text="Raumbuch 1.0 · Eckert & Partner Kälteplanung",
-                            text_color="#8A9AA8", font=("Segoe UI", 12))
+                            text_color=config.COLORS["muted"], font=("Segoe UI", 12))
         info.grid(row=3, column=0, sticky="w", padx=28, pady=(20, 10))
 
     def browse(self):

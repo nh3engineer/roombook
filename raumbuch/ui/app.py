@@ -28,7 +28,7 @@ class RaumbuchApp(ctk.CTk):
         self.grid_columnconfigure(1, weight=1)
         self.grid_rowconfigure(0, weight=1)
 
-        self.sidebar = ctk.CTkFrame(self, fg_color=config.COLORS["primary"],
+        self.sidebar = ctk.CTkFrame(self, fg_color=config.COLORS["sidebar"],
                                     corner_radius=0, width=240)
         self.sidebar.grid(row=0, column=0, sticky="nsw")
         self.sidebar.grid_propagate(False)
@@ -57,17 +57,18 @@ class RaumbuchApp(ctk.CTk):
                 pass
         ctk.CTkLabel(self.sidebar, text="Raumbuch",
                      font=("Segoe UI", 24, "bold"),
-                     text_color="#FFFFFF").pack(pady=(8, 0))
+                     text_color=config.COLORS["primary"]).pack(pady=(8, 0))
         ctk.CTkLabel(self.sidebar, text="powered by Eckert & Partner",
                      font=("Segoe UI", 12),
-                     text_color=config.COLORS["accent"]).pack(pady=(2, 24))
+                     text_color=config.COLORS["muted"]).pack(pady=(2, 24))
 
         self.nav_buttons = {}
         for key, label in (("projects", "Meine Projekte"),
                             ("settings", "Einstellungen")):
             btn = ctk.CTkButton(self.sidebar, text=label, anchor="w", height=44,
                                 fg_color="transparent",
-                                hover_color=config.COLORS["primary_dark"],
+                                hover_color=config.COLORS["sidebar_hover"],
+                                text_color=config.COLORS["primary"],
                                 corner_radius=10,
                                 font=("Segoe UI", 14),
                                 command=lambda k=key: self._on_nav(k))
@@ -78,7 +79,7 @@ class RaumbuchApp(ctk.CTk):
         bottom.pack(side="bottom", pady=16)
         ctk.CTkLabel(bottom, text="Version 1.0 – Projekt & Raum",
                      font=("Segoe UI", 11),
-                     text_color="#8FB3C9").pack()
+                     text_color=config.COLORS["muted"]).pack()
 
     def _on_nav(self, key: str):
         if key == "projects":
@@ -92,7 +93,7 @@ class RaumbuchApp(ctk.CTk):
     def _highlight_nav(self, key: str):
         for k, btn in self.nav_buttons.items():
             if k == key:
-                btn.configure(fg_color=config.COLORS["primary_dark"])
+                btn.configure(fg_color=config.COLORS["card"])
             else:
                 btn.configure(fg_color="transparent")
 
@@ -119,7 +120,7 @@ class RaumbuchApp(ctk.CTk):
         ctk.CTkLabel(frame, text="Bitte kopieren Sie den folgenden Text komplett "
                                   "und schicken Sie ihn weiter – daraus ist die "
                                   "Ursache exakt erkennbar.",
-                     font=("Segoe UI", 12), text_color="#6B7B8A", justify="left").grid(
+                     font=("Segoe UI", 12), text_color=config.COLORS["muted"], justify="left").grid(
             row=1, column=0, sticky="w", padx=28)
         box = ctk.CTkTextbox(frame, font=("Consolas", 12), wrap="word")
         box.grid(row=2, column=0, sticky="nsew", padx=28, pady=12)

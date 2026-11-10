@@ -65,12 +65,15 @@ Version 1.0 – Projektverwaltung & Raumgeometrie mit Kälteleistungsberechnung.
 
 ## 🎨 Logo & Farben
 
-Das Programm nutzt das Platzhalzer-Logo `raumbuch/assets/logo.png` in den Firmenfarben
-(dunkles Kühlblau `#0E3A5D`, Eisblau `#4FC3F7`).
+Das Programm nutzt die Original-Farbgebung von Eckert & Partner (kaelteplaner.de):
+weicher Rosa-Lavendel-Ton als Hintergrund, schwarzer Text, weiße Karten und
+Altrosa-Akzente (`#E8A0B4`).
 
 **Offizielles Eckert-&-Partner-Logo einbinden:**
 Einfach das Original-Logo als `logo.png` in den Ordner `raumbuch/assets/` speichern (altes überschreiben) – das Programm nutzt es automatisch beim nächsten Start.
 Die Farben können zentral in `raumbuch/config.py` (Abschnitt `COLORS`) angepasst werden.
+
+Vorschau der Oberfläche: `docs/screenshot-projektliste.png` und `docs/screenshot-raumansicht.png`.
 
 ---
 

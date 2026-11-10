@@ -17,7 +17,7 @@ class ProjectDialog(ctk.CTkToplevel):
                      font=("Segoe UI", 20, "bold"),
                      text_color=config.COLORS["primary"]).pack(pady=(20, 4))
         ctk.CTkLabel(self, text="Hier tragen Sie die wichtigsten Projektdaten ein.",
-                     font=("Segoe UI", 12), text_color="#6B7B8A").pack(pady=(0, 12))
+                     font=("Segoe UI", 12), text_color=config.COLORS["muted"]).pack(pady=(0, 12))
 
         form = ctk.CTkFrame(self, fg_color="transparent")
         form.pack(fill="both", expand=True, padx=32)
@@ -111,7 +111,7 @@ class RoomDialog(ctk.CTkToplevel):
                      font=("Segoe UI", 20, "bold"),
                      text_color=config.COLORS["primary"]).pack(pady=(16, 2))
         ctk.CTkLabel(self, text="Raumgeometrie eintragen – die Kälteleistung wird live berechnet.",
-                     font=("Segoe UI", 12), text_color="#6B7B8A").pack(pady=(0, 8))
+                     font=("Segoe UI", 12), text_color=config.COLORS["muted"]).pack(pady=(0, 8))
 
         form = ctk.CTkFrame(self, fg_color="transparent")
         form.pack(fill="both", expand=True, padx=32)
@@ -187,7 +187,7 @@ class RoomDialog(ctk.CTkToplevel):
                                  text_color=config.COLORS["primary"])
         self.live.pack(pady=(6, 0))
         ctk.CTkLabel(self, text="Fläche, Volumen und Leistung werden automatisch berechnet.",
-                     font=("Segoe UI", 11), text_color="#6B7B8A").pack()
+                     font=("Segoe UI", 11), text_color=config.COLORS["muted"]).pack()
 
         btns = ctk.CTkFrame(self, fg_color="transparent")
         btns.pack(fill="x", padx=32, pady=(10, 20))
