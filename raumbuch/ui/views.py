@@ -11,16 +11,16 @@ class ProjectListView(ctk.CTkFrame):
         super().__init__(parent, fg_color="transparent")
         self.app = app
         self.grid_columnconfigure(0, weight=1)
-        self.grid_rowconfigure(1, weight=1)
+        self.grid_rowconfigure(2, weight=1)
 
         header = ctk.CTkFrame(self, fg_color="transparent")
-        header.grid(row=0, column=0, sticky="ew", padx=28, pady=(24, 12))
+        header.grid(row=0, column=0, sticky="ew", padx=28, pady=(24, 8))
         widgets.section_title(header, "Meine Projekte").pack(side="left")
         widgets.primary_button(header, "+ Neues Projekt",
                                lambda: app.edit_project(None)).pack(side="right")
 
         search_frame = ctk.CTkFrame(self, fg_color="transparent")
-        search_frame.grid(row=0, column=0, sticky="ew", padx=28, pady=(70, 0))
+        search_frame.grid(row=1, column=0, sticky="ew", padx=28, pady=(0, 8))
         self.search = ctk.CTkEntry(search_frame, placeholder_text="🔍  Projekt suchen ...",
                                    height=38, font=("Segoe UI", 13))
         self.search.pack(side="left", fill="x", expand=True)
@@ -32,7 +32,7 @@ class ProjectListView(ctk.CTkFrame):
                         command=self.refresh_list).pack(side="right", padx=(16, 0))
 
         table_wrap = ctk.CTkFrame(self, fg_color="transparent")
-        table_wrap.grid(row=1, column=0, sticky="nsew", padx=28, pady=12)
+        table_wrap.grid(row=2, column=0, sticky="nsew", padx=28, pady=12)
         table_wrap.grid_columnconfigure(0, weight=1)
         table_wrap.grid_rowconfigure(0, weight=1)
 
@@ -45,7 +45,7 @@ class ProjectListView(ctk.CTkFrame):
         self.tree.bind("<Double-1>", lambda e: self.open_selected())
 
         btns = ctk.CTkFrame(self, fg_color="transparent")
-        btns.grid(row=2, column=0, sticky="ew", padx=28, pady=(4, 24))
+        btns.grid(row=3, column=0, sticky="ew", padx=28, pady=(4, 24))
         widgets.ghost_button(btns, "Öffnen", self.open_selected).pack(side="left", padx=(0, 10))
         widgets.ghost_button(btns, "Bearbeiten", self.edit_selected).pack(side="left", padx=10)
         widgets.accent_button(btns, "Archivieren / Aktivieren", self.toggle_archive).pack(side="left", padx=10)
@@ -59,7 +59,7 @@ class ProjectListView(ctk.CTkFrame):
         sel = self.tree.selection()
         if not sel:
             return None
-        return self.tree.item(sel[0])["values"][0]
+        return str(sel[0])
 
     def refresh_list(self):
         self.tree.delete(*self.tree.get_children())
