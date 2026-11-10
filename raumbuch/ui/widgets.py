@@ -82,5 +82,5 @@ def ghost_button(parent, text: str, command, width: int = 180) -> ctk.CTkButton:
 def danger_button(parent, text: str, command, width: int = 180) -> ctk.CTkButton:
     return ctk.CTkButton(parent, text=text, command=command, width=width, height=38,
                          fg_color=config.COLORS["danger"],
-                         hover_color="#96281B",
+                         hover_color="#8E2E24",
                          font=("Segoe UI", 13, "bold"), corner_radius=10)

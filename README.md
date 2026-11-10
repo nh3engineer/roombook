@@ -2,99 +2,78 @@
 
 **Raumbuch – powered by Eckert & Partner**
 
-Ein modernes, leicht verständliches digitales Raumbuch für die Kälteplanung.
-Version 1.0 – Projektverwaltung & Raumgeometrie mit Kälteleistungsberechnung.
+Das digitale Raumbuch für die Kälteplanung – im Original-Branding von Eckert & Partner.
+Version 2.0 – Neuaufbau mit Benutzerverwaltung, vier Bereichen und mehreren Auslegungen pro Projekt.
 
 ---
 
-## Was kann Version 1.0?
+## Was kann Version 2.0?
 
-### 📁 Projekte anlegen & verwalten
-- Neues Projekt mit allen wichtigen Projektdaten (Projektname, -nummer, Kunde, Adresse, Bauvorhaben, Ansprechpartner, Datum, Planungsstand, Notizen)
-- Projektliste mit **Suche**, Sortierung, Bearbeiten, **Archivieren** und Löschen (mit Rückfrage)
-- Projekte **exportieren/importieren** (JSON-Datei) – ideal für Backup oder Übergabe an Kollegen
+### 👤 Benutzerebene
+- Mitarbeiter **registrieren sich mit Name, E-Mail-Adresse und Passwort** (einmalig)
+- **Anmeldung** beim Start der Software – jeder sieht, wer angemeldet ist
+- Abmelden jederzeit möglich
 
-### 🧊 Raumgeometrie & Kälteleistung
-- Räume pro Projekt anlegen: Länge, Breite, Höhe → **Fläche & Volumen automatisch**
-- **Kälteleistung wird live berechnet** (Transmissionslast, Lüftungslast, interne Lasten, Sicherheitsfaktor)
-- **Zwei Eingabevarianten:**
-  1. **Direkteingabe** im Programm mit Live-Berechnung
-  2. **Excel-Import** – Vorlage erstellen, ausfüllen, importieren (inkl. Validierung und verständlichen Fehlermeldungen)
-- Raumliste als Tabelle mit **Gesamtübersicht** (Gesamtfläche, Gesamtvolumen, Summe Kälteleistung)
-- „**Wie berechnet?**"-Button zeigt die Rechenwege transparent an
-- Raumliste **als Excel exportieren**
+### 🗂️ Vier Bereiche (per Seitenleiste)
+1. **Projekt** – alle wichtigen Projektdaten (Name, Nummer, Kunde, Adresse, Bauvorhaben, Ansprechpartner, Bearbeiter, Datum, Planungsstand, Notizen)
+2. **Raum** – die Raumgeometrie als Liste: **Länge, Breite, Höhe → Volumen automatisch**; **Raumtyp als Dropdown** (Lager, Klimatisierung, Technische Klimatisierung, Tiefkühlung u. a.) – die Typenliste ist **beliebig erweiterbar** (Einstellungen → „Raumtypen verwalten")
+3. **Zentrale** – Auslegung der Kälteerzeugung (Bezeichnung, Medium wie NH3/CO2, Leistung, Temperatur)
+4. **Füllmenge** – Füllmengen erfassen (Medium, Menge in kg, Ort/Raum)
+
+### 📁 Projektübersicht, Auslegungen & Speichersystem
+- **Projektübersicht** als Startseite: alle gespeicherten Projekte und Auslegungen als Liste
+- **Mehrere Auslegungen/Versionen pro Projekt**: über „Speichern unter ..." wird jede Auslegung als eigene Projektdatei gespeichert (z. B. „Projekt_Auslegung 1", „Projekt_Auslegung 2")
+- **Öffnen** holt eine bestehende Auslegung zurück ins Programm
+- **Beim Schließen der Software wird an ungespeicherte Änderungen erinnert** (Speichern / Verwerfen / Abbrechen)
+- Ungespeicherte Änderungen sind durch „•" neben dem Projektnamen sichtbar
+
+### 📤 Export überall
+- **Excel-Export** (Projekt, Räume, Zentrale, Füllmenge, Summen – je ein Blatt)
+- **PDF-Export** mit E&P-Logo und Firmenfarben
+- Auch die Projektübersicht aller Projekte ist als Excel exportierbar
 
 ### 💾 Zentraler Datenspeicher
-- Alle Projekte liegen an **einem zentralen Datenordner** (Standard: `Dokumente\Raumbuch`)
-- Ordner ist in den **Einstellungen** frei konfigurierbar – ideal für Netzlaufwerke, Backups oder mehrere Rechner
-- Keine Daten im Programmordner
+- Alle Projekte, Auslegungen, Benutzer und Raumtypen liegen in **einem zentralen Datenordner** (Standard: `Dokumente\Raumbuch`)
+- Ordner frei konfigurierbar unter „Einstellungen" – ideal für Netzlaufwerke und Backups
 
 ---
 
 ## 🚀 Installation (Windows 10/11)
 
-### Schritt 1: Python installieren (nur einmal nötig)
-1. Python herunterladen: https://www.python.org/downloads/ (Button „Download Python 3.x")
-2. Installer starten und **wichtig**: Haken bei **„Add python.exe to PATH"** setzen
-3. „Install Now" klicken – fertig
-
-### Schritt 2: Raumbuch starten
-1. Dieses Repository herunterladen (grüner „Code"-Button → „Download ZIP") und entpacken
-2. **Doppelklick auf `start.bat`**
-3. Beim ersten Start richtet sich das Programm selbst ein (virtuelle Umgebung + Bibliotheken) – das dauert ca. 1–2 Minuten, danach startet das Raumbuch
-
-> Alternative ohne `start.bat`:
-> ```bat
-> python -m venv .venv
-> .venv\Scripts\activate
-> pip install -r requirements.txt
-> python -m raumbuch.main
-> ```
+1. **Python installieren** (nur einmal): https://www.python.org/downloads/ – im Installer den Haken **„Add python.exe to PATH"** setzen
+2. Dieses Repository als **ZIP herunterladen** (grüner „Code"-Button) und entpacken
+3. **Doppelklick auf `start.bat`** – beim ersten Start richtet sich alles selbst ein (ca. 1–2 Minuten)
 
 ---
 
 ## ✅ In 5 Minuten testen
 
-1. **Projekt anlegen**: „+ Neues Projekt" → Name z. B. „Molkerei Muster" → speichern
-2. **Raum anlegen**: „+ Neuer Raum" → z. B. R-001, „Kühlraum 1", 5 × 4 × 3 m → die Kälteleistung wird sofort live angezeigt
-3. **Excel testen**: „Excel-Vorlage erstellen" → Datei öffnen, eine Zeile ergänzen → „Excel-Import" → Raum erscheint in der Liste
-4. **Zentraler Speicher**: „Einstellungen" → Ihren Wunschordner eintragen → „Ordner öffnen" zeigt alle Projektdateien
-5. Fertig! 🎉
+1. **Registrieren**: Beim ersten Start Namen, E-Mail und Passwort eingeben → „Konto erstellen"
+2. **Neues Projekt**: „+ Neues Projekt" → Projektdaten eintragen → „Übernehmen"
+3. **Räume**: Seitenleiste „2 · Raum" → „+ Neuer Raum" → Raumtyp aus dem Dropdown wählen, L/B/H eintragen → Volumen erscheint automatisch
+4. **Speichern unter**: Oben rechts „Speichern unter ..." → z. B. „Auslegung 2" – so legen Sie Varianten an
+5. **Export**: „Als PDF exportieren" in jedem Bereich
 
 ---
 
-## 🎨 Logo & Farben
+## 🎨 Branding
 
-Das Programm nutzt die Original-Farbgebung von Eckert & Partner (kaelteplaner.de):
-weicher Rosa-Lavendel-Ton als Hintergrund, schwarzer Text, weiße Karten und
-Altrosa-Akzente (`#E8A0B4`).
+Das Programm nutzt die Original-Farbwelt von Eckert & Partner (kaelteplaner.de):
+weicher Rosa-Lavendel-Hintergrund, schwarzer Text, weiße Karten, Altrosa-Akzente.
+Das **Original-Logo** (`EP_Bildmarke`) liegt unter `raumbuch/assets/logo.png` –
+ein Logo-Update einfach durch die neue Datei ersetzen.
+Farben zentral anpassbar in `raumbuch/config.py` (Abschnitt `COLORS`).
 
-**Offizielles Eckert-&-Partner-Logo einbinden:**
-Einfach das Original-Logo als `logo.png` in den Ordner `raumbuch/assets/` speichern (altes überschreiben) – das Programm nutzt es automatisch beim nächsten Start.
-Die Farben können zentral in `raumbuch/config.py` (Abschnitt `COLORS`) angepasst werden.
-
-Vorschau der Oberfläche: `docs/screenshot-projektliste.png` und `docs/screenshot-raumansicht.png`.
+Vorschau: `docs/screenshot-projektliste.png` und `docs/screenshot-raumansicht.png`.
 
 ---
 
-## 🧮 Berechnungsgrundlagen
+## 🗺️ Ausblick
 
-- **Transmissionslast:** Q_T = (U_Wand × A_Wand + U_Decke × A_Decke + U_Boden × A_Boden) × ΔT
-  - A_Wand = 2 × (Länge + Breite) × Höhe, A_Decke = A_Boden = Länge × Breite
-- **Lüftungslast:** Q_L = (Volumen × Luftwechsel / 3600) × 1,2 kg/m³ × 1006 J/(kg·K) × ΔT
-- **Gesamt:** (Q_T + Q_L + interne Lasten) × (1 + Sicherheitsfaktor / 100)
-
-Alle Werte sind transparent im Programm unter „Wie berechnet?" einsehbar.
-
----
-
-## 🗺️ Ausblick (nächste Versionen)
-
-Das Raumbuch ist als ständig erweiterbares System gebaut. Geplant für Folgeversionen:
-- Druck-/PDF-Export des Raumbuchs im Firmenlayout
-- Detaillierte Bauteile (Fenster, Türen, Trennwände)
-- Geräte-/Komponentenauswahl
-- Raumgrafik & Schemaansicht
+Das Raumbuch ist als ständig erweiterbares System gebaut. Nächste Schritte nach Absprache:
+- Berechnungen auf Basis der Raumliste (welche Daten zusammengefasst/berechnet werden sollen)
+- Weitere Felder in Zentrale und Füllmenge
+- Druckansichten im Firmenlayout
 
 ---
 
